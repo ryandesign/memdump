@@ -18,6 +18,7 @@ scriptdir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 cleanup() {
     [ -d "${tmpdir-}" ] && rm -rf "$tmpdir"
     printf "Unmount %s\n" "$dsk"
+    humount
 }
 
 trap cleanup EXIT
