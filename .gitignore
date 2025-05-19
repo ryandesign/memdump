@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: © 2025 Ryan Carsten Schmidt <https://github.com/ryandesign>
+# SPDX-License-Identifier: MIT
+
+*.bin
+*.dsk
