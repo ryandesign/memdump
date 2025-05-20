@@ -53,13 +53,6 @@ struct data {
 	SFReply reply;
 };
 
-static void debug_num(long number) {
-	Str255 string;
-
-	NumToString(number, string);
-	DebugStr(string);
-}
-
 static void show_err(OSErr err) {
 	Str255 string;
 	short id;
