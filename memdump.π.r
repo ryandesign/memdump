@@ -254,10 +254,10 @@ data 'KIND' (0) {
 
 resource 'SIZE' (-1, "2") {
 	reserved,
-	acceptSuspendResumeEvents,
+	ignoreSuspendResumeEvents,
 	reserved,
-	canBackground,
-	multiFinderAware,
+	cannotBackground,
+	notMultiFinderAware,
 	backgroundAndForeground,
 	dontGetFrontClicks,
 	ignoreChildDiedEvents,
