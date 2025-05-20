@@ -13,7 +13,7 @@ set -uo pipefail
 proj=memdump
 dsk="$proj.dsk"
 
-scriptdir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null || exit $?
 
 cleanup() {
     [ -d "${tmpdir-}" ] && rm -rf "$tmpdir"
@@ -51,7 +51,7 @@ import_file() {
                     -d DLOG_RezTemplateVersion=0 \
                     | LC_CTYPE=C sed -E 's/^(\t\$"[^"]*").*/\1/' \
                     | iconv -f macroman -t utf-8 \
-                    | "$scriptdir/sortrez.pl" > "$outfile.r" || return $?
+                    | ./sortrez.pl > "$outfile.r" || return $?
                 ;;
             text)
                 iconv -f macroman -t utf-8 < "$tmpfile" \

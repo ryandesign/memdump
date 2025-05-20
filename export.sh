@@ -13,6 +13,8 @@ set -uo pipefail
 proj=memdump
 dsk="$proj.dsk"
 
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null || exit $?
+
 cleanup() {
     [ -n "${tmpfile-}" ] && rm -f "$tmpfile"
     [ -n "${tmpfile2-}" ] && rm -f "$tmpfile2"
