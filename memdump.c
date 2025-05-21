@@ -147,7 +147,7 @@ static pascal void draw_default_button_outline(WindowPtr window, short item) {
 static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short *item) {
 	struct data *data;
 	Boolean handled;
-	char key;
+	unsigned char key;
 
 	data = (struct data *)GetWRefCon(dialog);
 	handled = false;
