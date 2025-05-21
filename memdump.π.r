@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 */
 
 data 'CNFG' (2) {
-	$"6410 0000 0000 0000 0000"
+	$"6610 0000 0000 0000 0000"
 };
 
 data 'CODE' (0) {
