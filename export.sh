@@ -13,6 +13,16 @@ set -uo pipefail
 proj=memdump
 dsk="$proj.dsk"
 
+err() {
+    local msg="$1"
+    local code="${2-1}"
+
+    printf "%s: %s\n" "$(basename "$0")" "$msg" 1>&2
+    exit "$code"
+}
+
+[ "$(uname -s)" = "Darwin" ] || err "this script only works on macOS"
+
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null || exit $?
 
 cleanup() {
