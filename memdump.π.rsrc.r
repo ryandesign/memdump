@@ -34,62 +34,74 @@ resource 'ALRT' (130, purgeable) {
 };
 
 resource 'DITL' (128, purgeable) {
-	{	/* array DITLarray: 10 elements */
+	{	/* array DITLarray: 12 elements */
 		/* [1] */
-		{150, 180, 170, 238},
+		{159, 184, 179, 242},
 		Button {
 			enabled,
 			"OK"
 		},
 		/* [2] */
-		{150, 110, 170, 168},
+		{159, 113, 179, 171},
 		Button {
 			enabled,
 			"Cancel"
 		},
 		/* [3] */
-		{146, 176, 174, 242},
+		{155, 180, 183, 246},
 		UserItem {
 			disabled
 		},
 		/* [4] */
-		{10, 10, 26, 234},
+		{7, 8, 23, 244},
 		StaticText {
 			disabled,
 			"Save contents of memory to disk"
 		},
 		/* [5] */
-		{50, 10, 66, 138},
-		StaticText {
-			disabled,
-			"RAM size:"
+		{41, 8, 59, 98},
+		RadioButton {
+			enabled,
+			"Decimal"
 		},
 		/* [6] */
-		{50, 160, 66, 240},
+		{41, 108, 59, 238},
+		RadioButton {
+			enabled,
+			"Hexadecimal"
+		},
+		/* [7] */
+		{77, 8, 93, 148},
+		StaticText {
+			disabled,
+			"RAM size in bytes:"
+		},
+		/* [8] */
+		{77, 160, 93, 239},
 		StaticText {
 			disabled,
 			""
 		},
-		/* [7] */
-		{80, 10, 96, 138},
+		/* [9] */
+		{102, 8, 118, 148},
 		StaticText {
 			disabled,
 			"Starting address:"
 		},
-		/* [8] */
-		{80, 160, 96, 240},
+		/* [10] */
+		{102, 160, 118, 239},
 		EditText {
 			enabled,
 			""
 		},
-		/* [9] */
-		{110, 10, 126, 138},
+		/* [11] */
+		{127, 8, 143, 148},
 		StaticText {
 			disabled,
-			"Ending address:"
+			"Ending address + 1:"
 		},
-		/* [10] */
-		{110, 160, 126, 240},
+		/* [12] */
+		{127, 160, 143, 239},
 		EditText {
 			enabled,
 			""
@@ -132,7 +144,7 @@ resource 'DITL' (130) {
 };
 
 resource 'DLOG' (128, purgeable) {
-	{40, 130, 224, 382},
+	{40, 130, 229, 382},
 	dBoxProc,
 	invisible,
 	noGoAway,
