@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 */
 
 resource 'ALRT' (129, purgeable) {
-	{80, 104, 208, 408},
+	{80, 104, 193, 408},
 	129,
 	{	/* array: 4 elements */
 		/* [1] */
@@ -19,7 +19,7 @@ resource 'ALRT' (129, purgeable) {
 };
 
 resource 'ALRT' (130, purgeable) {
-	{80, 104, 208, 408},
+	{80, 104, 193, 408},
 	130,
 	{	/* array: 4 elements */
 		/* [1] */
@@ -100,13 +100,13 @@ resource 'DITL' (128, purgeable) {
 resource 'DITL' (129) {
 	{	/* array DITLarray: 2 elements */
 		/* [1] */
-		{90, 230, 110, 288},
+		{83, 236, 103, 294},
 		Button {
 			enabled,
 			"OK"
 		},
 		/* [2] */
-		{10, 70, 26, 294},
+		{7, 73, 71, 294},
 		StaticText {
 			disabled,
 			"Error ^0"
@@ -117,13 +117,13 @@ resource 'DITL' (129) {
 resource 'DITL' (130) {
 	{	/* array DITLarray: 2 elements */
 		/* [1] */
-		{90, 230, 110, 288},
+		{83, 236, 103, 294},
 		Button {
 			enabled,
 			"OK"
 		},
 		/* [2] */
-		{10, 70, 42, 294},
+		{7, 73, 71, 294},
 		StaticText {
 			disabled,
 			"^0"
