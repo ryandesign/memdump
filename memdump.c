@@ -3,6 +3,9 @@ SPDX-FileCopyrightText: © 2025 Ryan Carsten Schmidt <https://github.com/ryandes
 SPDX-License-Identifier: MIT
 */
 
+#include <MultiFinder.h>
+#include <OSUtil.h>
+
 #ifndef nil
 #define nil ((void *)0)
 #endif
@@ -50,6 +53,15 @@ SPDX-License-Identifier: MIT
 #define k_creator_code '????'
 #define k_type_code '????'
 
+#ifndef _InitGraf
+#define _InitGraf 0xA86E
+#define _OSDispatch 0xA88F
+#define _Unimplemented 0xA89F
+typedef SignedByte TrapType;
+#endif
+
+#define has_64k_rom() (ROM85 < 0)
+
 struct data {
 	long start;
 	long end;
@@ -57,6 +69,33 @@ struct data {
 	SFReply reply;
 	Boolean hex;
 };
+
+static short get_num_toolbox_traps(void) {
+	return (NGetTrapAddress(_InitGraf, ToolTrap) == NGetTrapAddress(0xAA6E, ToolTrap)) ? 0x200 : 0x400;
+}
+
+static TrapType get_trap_type(unsigned short trap) {
+	return (trap & 0x0800) ? ToolTrap : OSTrap;
+}
+
+static has_trap(unsigned short trap) {
+	TrapType trap_type;
+	Boolean has_trap;
+
+	if (has_64k_rom()) {
+		has_trap = false;
+	} else {
+		trap_type = get_trap_type(trap);
+		if (ToolTrap == trap_type) {
+			trap &= 0x03FF;
+			if (trap >= get_num_toolbox_traps()) {
+				trap = _Unimplemented;
+			}
+		}
+		has_trap = NGetTrapAddress(trap, trap_type) != NGetTrapAddress(_Unimplemented, ToolTrap);
+	}
+	return has_trap;
+}
 
 static void show_err(OSErr err) {
 	Str255 string;
@@ -303,7 +342,7 @@ static void update_controls(DialogPtr dialog) {
 }
 
 static Ptr get_top_mem(void) {
-	return TopMem(); /* todo: wrong under multifinder */
+	return has_trap(_OSDispatch) ? MFTopMem() : TopMem();
 }
 
 static Boolean get_user_input(struct data *data) {
