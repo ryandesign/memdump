@@ -86,7 +86,7 @@ resource 'DITL' (128, purgeable) {
 		{102, 8, 118, 148},
 		StaticText {
 			disabled,
-			"Starting address:"
+			"First address:"
 		},
 		/* [10] */
 		{102, 160, 118, 239},
@@ -98,7 +98,7 @@ resource 'DITL' (128, purgeable) {
 		{127, 8, 143, 148},
 		StaticText {
 			disabled,
-			"Ending address + 1:"
+			"Last address:"
 		},
 		/* [12] */
 		{127, 160, 143, 239},
@@ -165,8 +165,8 @@ resource 'STR#' (128, purgeable) {
 resource 'STR#' (129, purgeable) {
 	{	/* array StringArray: 1 elements */
 		/* [1] */
-		"Start address must be less than end addr"
-		"ess."
+		"Last address cannot be less than first a"
+		"ddress."
 	}
 };
 

@@ -24,8 +24,8 @@ SPDX-License-Identifier: MIT
 #define i_decimal 5
 #define i_hexadecimal 6
 #define i_ram_size 8
-#define i_start 10
-#define i_end 12
+#define i_first 10
+#define i_last 12
 
 #define r_error_number_alert 129
 #define r_error_string_alert 130
@@ -63,8 +63,8 @@ typedef SignedByte TrapType;
 #define has_64k_rom() (ROM85 < 0)
 
 struct data {
-	long start;
-	long end;
+	long first;
+	long last;
 	long max;
 	SFReply reply;
 	Boolean hex;
@@ -137,8 +137,8 @@ static void save_data(struct data *data) {
 		show_err(err);
 		return;
 	}
-	count = data->end - data->start;
-	err = FSWrite(refnum, &count, (void *)data->start);
+	count = data->last - data->first + 1;
+	err = FSWrite(refnum, &count, (void *)data->first);
 	if (noErr != err) {
 		show_err(err);
 		goto close;
@@ -332,8 +332,8 @@ static void update_controls(DialogPtr dialog) {
 	SetCtlValue((ControlHandle)handle, data->hex);
 
 	set_dialog_item_text_to_number(dialog, i_ram_size, data->max);
-	set_dialog_item_text_to_number(dialog, i_start, data->start);
-	set_dialog_item_text_to_number(dialog, i_end, data->end);
+	set_dialog_item_text_to_number(dialog, i_first, data->first);
+	set_dialog_item_text_to_number(dialog, i_last, data->last);
 
 	selected_text_item = ((DialogPeek)dialog)->editField + 1;
 	if (selected_text_item > 0) {
@@ -361,8 +361,9 @@ static Boolean get_user_input(struct data *data) {
 	if (!dialog) return;
 	SetWRefCon(dialog, data);
 
-	data->start = 0;
-	data->end = data->max = (long)get_top_mem();
+	data->first = 0;
+	data->max = (long)get_top_mem();
+	data->last = data->max - 1;
 	data->hex = false;
 
 	GetDItem(dialog, i_default_button_outline, &item_type, &handle, &rect);
@@ -374,11 +375,11 @@ static Boolean get_user_input(struct data *data) {
 	GetIndString(default_filename, r_file_strings, i_default_filename);
 	do {
 		ModalDialog(&dialog_filter, &item);
-		data->start = get_dialog_item_text_as_number(dialog, i_start);
-		data->end = get_dialog_item_text_as_number(dialog, i_end);
+		data->first = get_dialog_item_text_as_number(dialog, i_first);
+		data->last = get_dialog_item_text_as_number(dialog, i_last);
 		switch (item) {
 			case i_ok:
-				if (data->end <= data->start) {
+				if (data->last < data->first) {
 					show_err(e_range);
 					item = 0;
 				} else {
