@@ -364,7 +364,7 @@ static Boolean get_user_input(struct data *data) {
 	data->first = 0;
 	data->max = (long)get_top_mem();
 	data->last = data->max - 1;
-	data->hex = false;
+	data->hex = true;
 
 	GetDItem(dialog, i_default_button_outline, &item_type, &handle, &rect);
 	SetDItem(dialog, i_default_button_outline, item_type, (Handle)&draw_default_button_outline, &rect);
