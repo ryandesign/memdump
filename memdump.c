@@ -12,7 +12,9 @@ SPDX-License-Identifier: MIT
 
 #define r_file_strings 128
 #define i_prompt 1
-#define i_default_filename 2
+#define i_default_filename_start 2
+#define i_default_filename_middle 3
+#define i_default_filename_end 4
 
 #define r_error_strings 129
 #define e_range 1
@@ -95,6 +97,14 @@ static has_trap(unsigned short trap) {
 		has_trap = NGetTrapAddress(trap, trap_type) != NGetTrapAddress(_Unimplemented, ToolTrap);
 	}
 	return has_trap;
+}
+
+static void append_string(Str255 string, StringPtr append) {
+	Size count;
+
+	count = (append[0] + string[0] > 255) ? (255 - string[0]) : append[0];
+	BlockMove(&append[1], &string[string[0] + 1], count);
+	string[0] += count;
 }
 
 static void show_err(OSErr err) {
@@ -345,6 +355,20 @@ static Ptr get_top_mem(void) {
 	return has_trap(_OSDispatch) ? MFTopMem() : TopMem();
 }
 
+static void make_default_filename(struct data *data, Str255 filename) {
+	Str255 string;
+
+	GetIndString(filename, r_file_strings, i_default_filename_start);
+	num_to_hex_string(data->first, string);
+	append_string(filename, string);
+	GetIndString(string, r_file_strings, i_default_filename_middle);
+	append_string(filename, string);
+	num_to_hex_string(data->last, string);
+	append_string(filename, string);
+	GetIndString(string, r_file_strings, i_default_filename_end);
+	append_string(filename, string);
+}
+
 static Boolean get_user_input(struct data *data) {
 	DialogPtr dialog;
 	Boolean hex;
@@ -372,7 +396,6 @@ static Boolean get_user_input(struct data *data) {
 	ShowWindow(dialog);
 
 	GetIndString(prompt, r_file_strings, i_prompt);
-	GetIndString(default_filename, r_file_strings, i_default_filename);
 	do {
 		ModalDialog(&dialog_filter, &item);
 		data->first = get_dialog_item_text_as_number(dialog, i_first);
@@ -385,6 +408,7 @@ static Boolean get_user_input(struct data *data) {
 				} else {
 					top_left.h = k_sfputfile_left;
 					top_left.v = k_sfputfile_top;
+					make_default_filename(data, default_filename);
 					SFPutFile(top_left, prompt, default_filename, nil, &data->reply);
 					if (!data->reply.good) item = 0;
 				}

@@ -154,11 +154,15 @@ resource 'DLOG' (128, purgeable) {
 };
 
 resource 'STR#' (128, purgeable) {
-	{	/* array StringArray: 2 elements */
+	{	/* array StringArray: 4 elements */
 		/* [1] */
 		"Save as:",
 		/* [2] */
-		"Dump"
+		"Dump ",
+		/* [3] */
+		"-",
+		/* [4] */
+		""
 	}
 };
 
