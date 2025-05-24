@@ -109,7 +109,7 @@ resource 'DITL' (128, purgeable) {
 	}
 };
 
-resource 'DITL' (129) {
+resource 'DITL' (129, purgeable) {
 	{	/* array DITLarray: 2 elements */
 		/* [1] */
 		{83, 236, 103, 294},
@@ -126,7 +126,7 @@ resource 'DITL' (129) {
 	}
 };
 
-resource 'DITL' (130) {
+resource 'DITL' (130, purgeable) {
 	{	/* array DITLarray: 2 elements */
 		/* [1] */
 		{83, 236, 103, 294},
