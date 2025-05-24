@@ -99,6 +99,12 @@ static has_trap(unsigned short trap) {
 	return has_trap;
 }
 
+/* Tech Note 158: Frequently Asked MultiFinder Questions */
+#define switch_ptr ((long *)0x282)
+static Boolean has_switcher(void) {
+	return (0 != *switch_ptr) && (-1 != *switch_ptr);
+}
+
 static void append_string(Str255 string, StringPtr append) {
 	Size count;
 
@@ -352,7 +358,7 @@ static void update_controls(DialogPtr dialog) {
 }
 
 static Ptr get_top_mem(void) {
-	return has_trap(_OSDispatch) ? MFTopMem() : TopMem();
+	return (has_trap(_OSDispatch) && !has_switcher()) ? MFTopMem() : TopMem();
 }
 
 static void make_default_filename(struct data *data, Str255 filename) {
