@@ -33,6 +33,21 @@ resource 'ALRT' (130, purgeable) {
 	}
 };
 
+resource 'ALRT' (131, purgeable) {
+	{80, 104, 193, 408},
+	131,
+	{	/* array: 4 elements */
+		/* [1] */
+		OK, visible, sound1,
+		/* [2] */
+		OK, invisible, sound1,
+		/* [3] */
+		OK, invisible, sound1,
+		/* [4] */
+		OK, invisible, sound1
+	}
+};
+
 resource 'DITL' (128, purgeable) {
 	{	/* array DITLarray: 12 elements */
 		/* [1] */
@@ -139,6 +154,24 @@ resource 'DITL' (130, purgeable) {
 		StaticText {
 			disabled,
 			"^0"
+		}
+	}
+};
+
+resource 'DITL' (131, purgeable) {
+	{	/* array DITLarray: 2 elements */
+		/* [1] */
+		{83, 236, 103, 294},
+		Button {
+			enabled,
+			"OK"
+		},
+		/* [2] */
+		{7, 73, 71, 294},
+		StaticText {
+			disabled,
+			"Only digits can be typed into this text "
+			"field."
 		}
 	}
 };

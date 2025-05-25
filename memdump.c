@@ -31,6 +31,7 @@ SPDX-License-Identifier: MIT
 
 #define r_error_number_alert 129
 #define r_error_string_alert 130
+#define r_bad_key_alert 131
 
 #define k_enter 0x03
 #define k_escape 0x1b
@@ -225,6 +226,7 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 				/* convert lowercase to uppercase */
 				event->message = (event->message & ~charCodeMask) | (key - ('a' - 'A'));
 			} else if (key < '0' || key > '9') {
+				NoteAlert(r_bad_key_alert, nil);
 				/* pretend other keystrokes didn't happen */
 				event->what = nullEvent;
 			}
