@@ -13,6 +13,23 @@ Changelog](https://common-changelog.org/). Because of limitations imposed on the
 format of version numbers by the Macintosh `vers` resource, this project does
 not currently use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.0d4] - 2025-05-24
+
+_Measure twice, cut once_
+
+### Changed
+
+- **UI**: Dump size is now displayed in an editable text field, in addition to
+  the existing first and last fields. Whichever field you change, the others
+  update accordingly. ([#6](https://github.com/ryandesign/memdump/issues/6))
+- **UI**: Invalid input now elicits a beep. Repeated invalid input will summon
+  an alert box.
+
+### Fixed
+
+- **UI**: No longer crashes under Switcher.
+  ([#9](https://github.com/ryandesign/memdump/issues/9))
+
 ## [0.0.0d3] - 2025-05-22
 
 _What's in a name?_
@@ -68,6 +85,7 @@ _Initial release_
 - **UI**: A dialog box shows the size of RAM and allows input of a range of
   memory to dump to a file.
 
+[0.0.0d4]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d4
 [0.0.0d3]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d3
 [0.0.0d2]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d2
 [0.0.0d1]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d1
