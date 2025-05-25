@@ -240,11 +240,14 @@ static void num_to_hex_string(long number, Str255 string) {
 	short j;
 	short len;
 	char remainder;
+	Boolean negative;
 
 	/* Build the string in reverse order in an otherwise unused later section of the string. */
 	i = 10;
 	j = 0;
 	len = 0;
+	negative = number < 0;
+	if (negative) number *= -1;
 	do {
 		++i;
 		++len;
@@ -257,6 +260,11 @@ static void num_to_hex_string(long number, Str255 string) {
 		string[i] = remainder;
 		number >>= 4;
 	} while (number > 0);
+	if (negative) {
+		++i;
+		++len;
+		string[i] = '-';
+	}
 
 	/* Reverse the string into the correct order. */
 	while (j < len) {
@@ -270,9 +278,11 @@ static void hex_string_to_num(Str255 string, long *number) {
 	short len;
 	long result;
 	char digit;
+	Boolean negative;
 
 	result = 0;
 	len = string[0];
+	negative = len && '-' == string[1];
 	for (i = 1; i <= len; ++i) {
 		digit = string[i];
 		if (digit >= '0' && digit <= '9') {
@@ -287,6 +297,7 @@ static void hex_string_to_num(Str255 string, long *number) {
 		result <<= 4;
 		result += digit;
 	}
+	if (negative) result *= -1;
 	if (number) *number = result;
 }
 
