@@ -174,6 +174,7 @@ close:
 		show_err(err);
 		return;
 	}
+	SetCursor(&arrow);
 }
 
 static void flash_dialog_button(DialogPtr dialog, short item) {
