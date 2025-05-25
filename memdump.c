@@ -391,6 +391,7 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 
 	handled = false;
 	switch (event->what) {
+		case autoKey:
 		case keyDown:
 			key = event->message & charCodeMask;
 			if (k_return == key || k_enter == key) {
