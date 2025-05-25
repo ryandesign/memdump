@@ -49,21 +49,21 @@ resource 'ALRT' (131, purgeable) {
 };
 
 resource 'DITL' (128, purgeable) {
-	{	/* array DITLarray: 12 elements */
+	{	/* array DITLarray: 14 elements */
 		/* [1] */
-		{159, 184, 179, 242},
+		{184, 184, 204, 242},
 		Button {
 			enabled,
 			"OK"
 		},
 		/* [2] */
-		{159, 113, 179, 171},
+		{184, 113, 204, 171},
 		Button {
 			enabled,
 			"Cancel"
 		},
 		/* [3] */
-		{155, 180, 183, 246},
+		{180, 180, 208, 246},
 		UserItem {
 			disabled
 		},
@@ -101,7 +101,7 @@ resource 'DITL' (128, purgeable) {
 		{102, 8, 118, 148},
 		StaticText {
 			disabled,
-			"First address:"
+			"Dump size:"
 		},
 		/* [10] */
 		{102, 160, 118, 239},
@@ -113,10 +113,22 @@ resource 'DITL' (128, purgeable) {
 		{127, 8, 143, 148},
 		StaticText {
 			disabled,
-			"Last address:"
+			"First address:"
 		},
 		/* [12] */
 		{127, 160, 143, 239},
+		EditText {
+			enabled,
+			""
+		},
+		/* [13] */
+		{152, 8, 168, 148},
+		StaticText {
+			disabled,
+			"Last address:"
+		},
+		/* [14] */
+		{152, 160, 168, 239},
 		EditText {
 			enabled,
 			""
@@ -177,7 +189,7 @@ resource 'DITL' (131, purgeable) {
 };
 
 resource 'DLOG' (128, purgeable) {
-	{40, 130, 229, 382},
+	{40, 130, 254, 382},
 	dBoxProc,
 	invisible,
 	noGoAway,
@@ -200,10 +212,12 @@ resource 'STR#' (128, purgeable) {
 };
 
 resource 'STR#' (129, purgeable) {
-	{	/* array StringArray: 1 elements */
+	{	/* array StringArray: 2 elements */
 		/* [1] */
-		"Last address cannot be less than first a"
-		"ddress."
+		"Dump size must be greater than zero.",
+		/* [2] */
+		"First address must not be less than zero"
+		"."
 	}
 };
 

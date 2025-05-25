@@ -17,7 +17,8 @@ SPDX-License-Identifier: MIT
 #define i_default_filename_end 4
 
 #define r_error_strings 129
-#define e_range 1
+#define e_bad_count 1
+#define e_bad_start 2
 
 #define r_dialog 128
 #define i_ok 1
@@ -26,8 +27,9 @@ SPDX-License-Identifier: MIT
 #define i_decimal 5
 #define i_hexadecimal 6
 #define i_ram_size 8
-#define i_first 10
-#define i_last 12
+#define i_dump_size 10
+#define i_first 12
+#define i_last 14
 
 #define r_error_number_alert 129
 #define r_error_string_alert 130
@@ -66,11 +68,17 @@ typedef SignedByte TrapType;
 #define has_64k_rom() (ROM85 < 0)
 
 struct data {
+	long ram_size;
+	long count;
 	long first;
-	long last;
-	long max;
 	SFReply reply;
+	Boolean keypress;
 	Boolean hex;
+	Boolean old_hex;
+	Boolean ram_size_dirty;
+	Boolean count_dirty;
+	Boolean first_dirty;
+	Boolean last_dirty;
 };
 
 static short get_num_toolbox_traps(void) {
@@ -154,7 +162,7 @@ static void save_data(struct data *data) {
 		show_err(err);
 		return;
 	}
-	count = data->last - data->first + 1;
+	count = data->count;
 	err = FSWrite(refnum, &count, (void *)data->first);
 	if (noErr != err) {
 		show_err(err);
@@ -198,41 +206,6 @@ static pascal void draw_default_button_outline(WindowPtr window, short item) {
 	FrameRoundRect(&rect, k_default_button_outline_curve, k_default_button_outline_curve);
 	SetPenState(&pen_state);
 	SetPort(port);
-}
-
-static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short *item) {
-	struct data *data;
-	Boolean handled;
-	unsigned char key;
-
-	data = (struct data *)GetWRefCon(dialog);
-	handled = false;
-	switch (event->what) {
-		case keyDown:
-			key = event->message & charCodeMask;
-			if (k_return == key || k_enter == key) {
-				if (item) *item = i_ok;
-				flash_dialog_button(dialog, i_ok);
-				handled = true;
-			} else if (k_escape == key || ('.' == key && (event->modifiers & cmdKey))) {
-				if (item) *item = i_cancel;
-				flash_dialog_button(dialog, i_cancel);
-				handled = true;
-			} else if (key < 32) {
-				/* allow control characters (tab, delete, arrow keys, etc.) */
-			} else if (data->hex && (key >= 'A' && key <= 'F')) {
-				/* allow hex letters in hex mode */
-			} else if (data->hex && (key >= 'a' && key <= 'f')) {
-				/* convert lowercase to uppercase */
-				event->message = (event->message & ~charCodeMask) | (key - ('a' - 'A'));
-			} else if (key < '0' || key > '9') {
-				NoteAlert(r_bad_key_alert, nil);
-				/* pretend other keystrokes didn't happen */
-				event->what = nullEvent;
-			}
-			break;
-	}
-	return handled;
 }
 
 static void num_to_hex_string(long number, Str255 string) {
@@ -351,23 +324,98 @@ static void update_controls(DialogPtr dialog) {
 	short item_type;
 	Handle handle;
 	Rect rect;
-	short selected_text_item;
+	short focused_text_item;
 
 	data = (struct data *)GetWRefCon(dialog);
 
-	GetDItem(dialog, i_decimal, &item_type, &handle, &rect);
-	SetCtlValue((ControlHandle)handle, !data->hex);
-	GetDItem(dialog, i_hexadecimal, &item_type, &handle, &rect);
-	SetCtlValue((ControlHandle)handle, data->hex);
-
-	set_dialog_item_text_to_number(dialog, i_ram_size, data->max);
-	set_dialog_item_text_to_number(dialog, i_first, data->first);
-	set_dialog_item_text_to_number(dialog, i_last, data->last);
-
-	selected_text_item = ((DialogPeek)dialog)->editField + 1;
-	if (selected_text_item > 0) {
-		SelIText(dialog, selected_text_item, k_min_selection, k_max_selection);
+	if (data->hex != data->old_hex) {
+		GetDItem(dialog, i_decimal, &item_type, &handle, &rect);
+		SetCtlValue((ControlHandle)handle, !data->hex);
+		GetDItem(dialog, i_hexadecimal, &item_type, &handle, &rect);
+		SetCtlValue((ControlHandle)handle, data->hex);
+		data->ram_size_dirty = data->count_dirty = data->first_dirty = data->last_dirty = true;
 	}
+	if (data->ram_size_dirty) {
+		set_dialog_item_text_to_number(dialog, i_ram_size, data->ram_size);
+		data->ram_size_dirty = false;
+	}
+	if (data->count_dirty) {
+		set_dialog_item_text_to_number(dialog, i_dump_size, data->count);
+		data->count_dirty = false;
+	}
+	if (data->first_dirty) {
+		set_dialog_item_text_to_number(dialog, i_first, data->first);
+		data->first_dirty = false;
+	}
+	if (data->last_dirty) {
+		set_dialog_item_text_to_number(dialog, i_last, data->first + data->count - 1);
+		data->last_dirty = false;
+	}
+	if (data->hex != data->old_hex) {
+		focused_text_item = ((DialogPeek)dialog)->editField + 1;
+		if (focused_text_item > 0) {
+			SelIText(dialog, focused_text_item, k_min_selection, k_max_selection);
+		}
+		data->old_hex = data->hex;
+	}
+}
+
+static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short *item) {
+	struct data *data;
+	short focused_text_item;
+	Boolean handled;
+	unsigned char key;
+
+	data = (struct data *)GetWRefCon(dialog);
+
+	if (data->keypress) {
+		focused_text_item = ((DialogPeek)dialog)->editField + 1;
+		switch (focused_text_item) {
+			case i_dump_size:
+				data->count = get_dialog_item_text_as_number(dialog, i_dump_size);
+				data->last_dirty = true;
+				break;
+			case i_first:
+				data->first = get_dialog_item_text_as_number(dialog, i_first);
+				data->last_dirty = true;
+				break;
+			case i_last:
+				data->count = get_dialog_item_text_as_number(dialog, i_last) - data->first + 1;
+				data->count_dirty = true;
+				break;
+		}
+		update_controls(dialog);
+		data->keypress = false;
+	}
+
+	handled = false;
+	switch (event->what) {
+		case keyDown:
+			key = event->message & charCodeMask;
+			if (k_return == key || k_enter == key) {
+				if (item) *item = i_ok;
+				flash_dialog_button(dialog, i_ok);
+				handled = true;
+			} else if (k_escape == key || ('.' == key && (event->modifiers & cmdKey))) {
+				if (item) *item = i_cancel;
+				flash_dialog_button(dialog, i_cancel);
+				handled = true;
+			} else if (key < 32) {
+				/* allow control characters (tab, delete, arrow keys, etc.) */
+			} else if (data->hex && (key >= 'A' && key <= 'F')) {
+				/* allow hex letters in hex mode */
+			} else if (data->hex && (key >= 'a' && key <= 'f')) {
+				/* convert lowercase to uppercase */
+				event->message = (event->message & ~charCodeMask) | (key - ('a' - 'A'));
+			} else if (key < '0' || key > '9') {
+				/* pretend other keystrokes didn't happen */
+				NoteAlert(r_bad_key_alert, nil);
+				event->what = nullEvent;
+			}
+			data->keypress = keyDown == event->what && !handled;
+			break;
+	}
+	return handled;
 }
 
 static Ptr get_top_mem(void) {
@@ -382,7 +430,7 @@ static void make_default_filename(struct data *data, Str255 filename) {
 	append_string(filename, string);
 	GetIndString(string, r_file_strings, i_default_filename_middle);
 	append_string(filename, string);
-	num_to_hex_string(data->last, string);
+	num_to_hex_string(data->first + data->count - 1, string);
 	append_string(filename, string);
 	GetIndString(string, r_file_strings, i_default_filename_end);
 	append_string(filename, string);
@@ -404,10 +452,11 @@ static Boolean get_user_input(struct data *data) {
 	if (!dialog) return;
 	SetWRefCon(dialog, data);
 
+	data->keypress = false;
 	data->first = 0;
-	data->max = (long)get_top_mem();
-	data->last = data->max - 1;
+	data->count = data->ram_size = (long)get_top_mem();
 	data->hex = true;
+	data->old_hex = !data->hex;
 
 	GetDItem(dialog, i_default_button_outline, &item_type, &handle, &rect);
 	SetDItem(dialog, i_default_button_outline, item_type, (Handle)&draw_default_button_outline, &rect);
@@ -417,12 +466,13 @@ static Boolean get_user_input(struct data *data) {
 	GetIndString(prompt, r_file_strings, i_prompt);
 	do {
 		ModalDialog(&dialog_filter, &item);
-		data->first = get_dialog_item_text_as_number(dialog, i_first);
-		data->last = get_dialog_item_text_as_number(dialog, i_last);
 		switch (item) {
 			case i_ok:
-				if (data->last < data->first) {
-					show_err(e_range);
+				if (data->count <= 0) {
+					show_err(e_bad_count);
+					item = 0;
+				} else if (data->first < 0) {
+					show_err(e_bad_start);
 					item = 0;
 				} else {
 					top_left.h = k_sfputfile_left;
@@ -434,11 +484,8 @@ static Boolean get_user_input(struct data *data) {
 				break;
 			case i_decimal:
 			case i_hexadecimal:
-				hex = data->hex;
 				data->hex = i_hexadecimal == item;
-				if (hex != data->hex) {
-					update_controls(dialog);
-				}
+				update_controls(dialog);
 				break;
 		}
 	} while (i_ok != item && i_cancel != item);
