@@ -13,6 +13,35 @@ Changelog](https://common-changelog.org/). Because of limitations imposed on the
 format of version numbers by the Macintosh `vers` resource, this project does
 not currently use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.0d5] - 2025-06-26
+
+_Nobody likes a quitter_
+
+### Changed
+
+* -**UI**: Don't quit automatically after saving a dump. This allows you to save
+  additional dump files from other address ranges if desired. The OK and Cancel
+  buttons were renamed to Save and Quit with Command-S and Command-Q keyboard
+  shortcuts. ([#11](https://github.com/ryandesign/memdump/issues/11))
+
+### Added
+
+* -**UI**: Pressing Command-D now selects the Decimal radio button and pressing
+  Command-H selects the Hexadecimal radio button.
+  ([#12](https://github.com/ryandesign/memdump/issues/12))
+* -**UI**: Pressing Command-A now selects all of the text in the focused text
+  field. ([#13](https://github.com/ryandesign/memdump/issues/13))
+- **Documentation**: Added Usage section to README.md.
+
+### Fixed
+
+- **UI**: If a key is held down in a text field, do the same processing as when
+  the key was initially pressed.
+  ([#15](https://github.com/ryandesign/memdump/issues/15))
+- **UI**: If you press a key with the Command key held down and that isn't a
+  recognized keyboard shortcut, don't insert that character into the text field.
+  ([#16](https://github.com/ryandesign/memdump/issues/16))
+
 ## [0.0.0d4] - 2025-05-24
 
 _Measure twice, cut once_
