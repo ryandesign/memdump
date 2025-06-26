@@ -188,6 +188,10 @@ static void press_dialog_button(DialogPtr dialog, short item, short *out_item) {
 		case ctrlItem | btnCtrl:
 			hilite = inButton;
 			break;
+		case ctrlItem | chkCtrl:
+		case ctrlItem | radCtrl:
+			hilite = inCheckBox;
+			break;
 		default:
 			return;
 	}
@@ -417,6 +421,12 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 						if (focused_text_item > 0) {
 							SelIText(dialog, focused_text_item, k_min_selection, k_max_selection);
 						}
+						break;
+					case 'd':
+						press_dialog_button(dialog, i_decimal, item);
+						break;
+					case 'h':
+						press_dialog_button(dialog, i_hexadecimal, item);
 						break;
 					default:
 						handled = false;
