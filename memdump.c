@@ -376,8 +376,8 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 
 	data = (struct data *)GetWRefCon(dialog);
 
+	focused_text_item = ((DialogPeek)dialog)->editField + 1;
 	if (data->keypress) {
-		focused_text_item = ((DialogPeek)dialog)->editField + 1;
 		switch (focused_text_item) {
 			case i_dump_size:
 				data->count = get_dialog_item_text_as_number(dialog, i_dump_size);
@@ -411,7 +411,17 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 			} else if (key < 32) {
 				/* allow control characters (tab, delete, arrow keys, etc.) */
 			} else if (cmd_key) {
+				handled = true;
+				switch (key) {
+					case 'a':
+						if (focused_text_item > 0) {
+							SelIText(dialog, focused_text_item, k_min_selection, k_max_selection);
+						}
+						break;
+					default:
+						handled = false;
 						event->what = nullEvent;
+				}
 			} else {
 				if (data->hex && (key >= 'A' && key <= 'F')) {
 					/* allow hex letters in hex mode */
