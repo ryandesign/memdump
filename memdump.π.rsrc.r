@@ -225,9 +225,9 @@ resource 'vers' (1, purgeable) {
 	0x0,
 	0x0,
 	development,
-	0x4,
+	0x5,
 	0,
-	"0.0.0d4",
-	"0.0.0d4 © 2025 Ryan Carsten Schmidt"
+	"0.0.0d5",
+	"0.0.0d5 © 2025 Ryan Carsten Schmidt"
 };
 
