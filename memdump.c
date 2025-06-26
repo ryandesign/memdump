@@ -40,7 +40,7 @@ SPDX-License-Identifier: MIT
 #define k_return 0x0d
 
 #define k_hilite 1
-#define k_unhilite 0
+#define k_unhilite_control 0
 
 #define k_visual_delay 8
 
@@ -187,7 +187,7 @@ static void flash_dialog_button(DialogPtr dialog, short item) {
 	if (item_type == ctrlItem | btnCtrl) {
 		HiliteControl((ControlHandle)handle, k_hilite);
 		Delay(k_visual_delay, &ticks);
-		HiliteControl((ControlHandle)handle, k_unhilite);
+		HiliteControl((ControlHandle)handle, k_unhilite_control);
 	}
 }
 
