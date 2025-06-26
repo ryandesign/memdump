@@ -181,12 +181,12 @@ static void flash_dialog_button(DialogPtr dialog, short item) {
 	Handle handle;
 	short item_type;
 	Rect rect;
-	long ignore;
+	long ticks;
 
 	GetDItem(dialog, item, &item_type, &handle, &rect);
 	if (item_type == ctrlItem | btnCtrl) {
 		HiliteControl((ControlHandle)handle, k_hilite);
-		Delay(k_visual_delay, &ignore);
+		Delay(k_visual_delay, &ticks);
 		HiliteControl((ControlHandle)handle, k_unhilite);
 	}
 }
