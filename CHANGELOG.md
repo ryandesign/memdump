@@ -19,17 +19,17 @@ _Nobody likes a quitter_
 
 ### Changed
 
-* -**UI**: Don't quit automatically after saving a dump. This allows you to save
+- **UI**: Don't quit automatically after saving a dump. This allows you to save
   additional dump files from other address ranges if desired. The OK and Cancel
   buttons were renamed to Save and Quit with Command-S and Command-Q keyboard
   shortcuts. ([#11](https://github.com/ryandesign/memdump/issues/11))
 
 ### Added
 
-* -**UI**: Pressing Command-D now selects the Decimal radio button and pressing
+- **UI**: Pressing Command-D now selects the Decimal radio button and pressing
   Command-H selects the Hexadecimal radio button.
   ([#12](https://github.com/ryandesign/memdump/issues/12))
-* -**UI**: Pressing Command-A now selects all of the text in the focused text
+- **UI**: Pressing Command-A now selects all of the text in the focused text
   field. ([#13](https://github.com/ryandesign/memdump/issues/13))
 - **Documentation**: Added Usage section to README.md.
 
