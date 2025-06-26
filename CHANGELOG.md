@@ -114,6 +114,7 @@ _Initial release_
 - **UI**: A dialog box shows the size of RAM and allows input of a range of
   memory to dump to a file.
 
+[0.0.0d5]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d5
 [0.0.0d4]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d4
 [0.0.0d3]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d3
 [0.0.0d2]: https://github.com/ryandesign/memdump/releases/tag/v0.0.0d2
