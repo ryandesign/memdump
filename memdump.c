@@ -178,17 +178,23 @@ close:
 
 static void press_dialog_button(DialogPtr dialog, short item, short *out_item) {
 	Handle handle;
+	short hilite;
 	short item_type;
 	Rect rect;
 	long ticks;
 
 	GetDItem(dialog, item, &item_type, &handle, &rect);
-	if (item_type == ctrlItem | btnCtrl) {
-		HiliteControl((ControlHandle)handle, inButton);
-		Delay(k_visual_delay, &ticks);
-		HiliteControl((ControlHandle)handle, k_unhilite_control);
-		if (out_item) *out_item = item;
+	switch (item_type) {
+		case ctrlItem | btnCtrl:
+			hilite = inButton;
+			break;
+		default:
+			return;
 	}
+	HiliteControl((ControlHandle)handle, hilite);
+	Delay(k_visual_delay, &ticks);
+	HiliteControl((ControlHandle)handle, k_unhilite_control);
+	if (out_item) *out_item = item;
 }
 
 static pascal void draw_default_button_outline(WindowPtr window, short item) {
