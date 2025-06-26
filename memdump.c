@@ -371,6 +371,7 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 	struct data *data;
 	short focused_text_item;
 	Boolean handled;
+	Boolean cmd_key;
 	unsigned char key;
 
 	data = (struct data *)GetWRefCon(dialog);
@@ -400,23 +401,28 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 		case autoKey:
 		case keyDown:
 			key = event->message & charCodeMask;
+			cmd_key = event->modifiers & cmdKey ? true : false;
 			if (k_return == key || k_enter == key) {
 				press_dialog_button(dialog, i_ok, item);
 				handled = true;
-			} else if (k_escape == key || ('.' == key && (event->modifiers & cmdKey))) {
+			} else if (k_escape == key || (cmd_key && ('.' == key))) {
 				press_dialog_button(dialog, i_cancel, item);
 				handled = true;
 			} else if (key < 32) {
 				/* allow control characters (tab, delete, arrow keys, etc.) */
-			} else if (data->hex && (key >= 'A' && key <= 'F')) {
-				/* allow hex letters in hex mode */
-			} else if (data->hex && (key >= 'a' && key <= 'f')) {
-				/* convert lowercase to uppercase */
-				event->message = (event->message & ~charCodeMask) | (key - ('a' - 'A'));
-			} else if (key < '0' || key > '9') {
-				/* pretend other keystrokes didn't happen */
-				NoteAlert(r_bad_key_alert, nil);
-				event->what = nullEvent;
+			} else if (cmd_key) {
+						event->what = nullEvent;
+			} else {
+				if (data->hex && (key >= 'A' && key <= 'F')) {
+					/* allow hex letters in hex mode */
+				} else if (data->hex && (key >= 'a' && key <= 'f')) {
+					/* convert lowercase to uppercase */
+					event->message = (event->message & ~charCodeMask) | (key - ('a' - 'A'));
+				} else if (key < '0' || key > '9') {
+					/* pretend other keystrokes didn't happen */
+					NoteAlert(r_bad_key_alert, nil);
+					event->what = nullEvent;
+				}
 			}
 			data->keypress = nullEvent != event->what && !handled;
 			break;
