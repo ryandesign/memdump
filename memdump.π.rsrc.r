@@ -54,13 +54,13 @@ resource 'DITL' (128, purgeable) {
 		{184, 184, 204, 242},
 		Button {
 			enabled,
-			"OK"
+			"Save..."
 		},
 		/* [2] */
 		{184, 113, 204, 171},
 		Button {
 			enabled,
-			"Cancel"
+			"Quit"
 		},
 		/* [3] */
 		{180, 180, 208, 246},

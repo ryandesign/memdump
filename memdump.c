@@ -21,8 +21,8 @@ SPDX-License-Identifier: MIT
 #define e_bad_start 2
 
 #define r_dialog 128
-#define i_ok 1
-#define i_cancel 2
+#define i_save 1
+#define i_quit 2
 #define i_default_button_outline 3
 #define i_decimal 5
 #define i_hexadecimal 6
@@ -406,11 +406,11 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 		case keyDown:
 			key = event->message & charCodeMask;
 			cmd_key = event->modifiers & cmdKey ? true : false;
-			if (k_return == key || k_enter == key) {
-				press_dialog_button(dialog, i_ok, item);
+			if (k_return == key || k_enter == key || (cmd_key && ('s' == key))) {
+				press_dialog_button(dialog, i_save, item);
 				handled = true;
-			} else if (k_escape == key || (cmd_key && ('.' == key))) {
-				press_dialog_button(dialog, i_cancel, item);
+			} else if (k_escape == key || (cmd_key && ('.' == key || 'q' == key))) {
+				press_dialog_button(dialog, i_quit, item);
 				handled = true;
 			} else if (key < 32) {
 				/* allow control characters (tab, delete, arrow keys, etc.) */
@@ -468,7 +468,7 @@ static void make_default_filename(struct data *data, Str255 filename) {
 	append_string(filename, string);
 }
 
-static Boolean get_user_input(struct data *data) {
+static void show_ui(struct data *data) {
 	DialogPtr dialog;
 	Boolean hex;
 	short item;
@@ -499,19 +499,17 @@ static Boolean get_user_input(struct data *data) {
 	do {
 		ModalDialog(&dialog_filter, &item);
 		switch (item) {
-			case i_ok:
+			case i_save:
 				if (data->count <= 0) {
 					show_err(e_bad_count);
-					item = 0;
 				} else if (data->first < 0) {
 					show_err(e_bad_start);
-					item = 0;
 				} else {
 					top_left.h = k_sfputfile_left;
 					top_left.v = k_sfputfile_top;
 					make_default_filename(data, default_filename);
 					SFPutFile(top_left, prompt, default_filename, nil, &data->reply);
-					if (!data->reply.good) item = 0;
+					if (data->reply.good) save_data(data);
 				}
 				break;
 			case i_decimal:
@@ -520,11 +518,9 @@ static Boolean get_user_input(struct data *data) {
 				update_controls(dialog);
 				break;
 		}
-	} while (i_ok != item && i_cancel != item);
+	} while (i_quit != item);
 
 	DisposDialog(dialog);
-
-	return i_ok == item;
 }
 
 static void init(void) {
@@ -543,7 +539,5 @@ void main(void) {
 	struct data data;
 
 	init();
-	if (get_user_input(&data)) {
-		save_data(&data);
-	}
+	show_ui(&data);
 }
