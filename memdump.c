@@ -176,7 +176,7 @@ close:
 	SetCursor(&arrow);
 }
 
-static void flash_dialog_button(DialogPtr dialog, short item) {
+static void press_dialog_button(DialogPtr dialog, short item, short *out_item) {
 	Handle handle;
 	short item_type;
 	Rect rect;
@@ -187,6 +187,7 @@ static void flash_dialog_button(DialogPtr dialog, short item) {
 		HiliteControl((ControlHandle)handle, inButton);
 		Delay(k_visual_delay, &ticks);
 		HiliteControl((ControlHandle)handle, k_unhilite_control);
+		if (out_item) *out_item = item;
 	}
 }
 
@@ -394,12 +395,10 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 		case keyDown:
 			key = event->message & charCodeMask;
 			if (k_return == key || k_enter == key) {
-				if (item) *item = i_ok;
-				flash_dialog_button(dialog, i_ok);
+				press_dialog_button(dialog, i_ok, item);
 				handled = true;
 			} else if (k_escape == key || ('.' == key && (event->modifiers & cmdKey))) {
-				if (item) *item = i_cancel;
-				flash_dialog_button(dialog, i_cancel);
+				press_dialog_button(dialog, i_cancel, item);
 				handled = true;
 			} else if (key < 32) {
 				/* allow control characters (tab, delete, arrow keys, etc.) */
