@@ -418,7 +418,7 @@ static pascal Boolean dialog_filter(DialogPtr dialog, EventRecord *event, short 
 				NoteAlert(r_bad_key_alert, nil);
 				event->what = nullEvent;
 			}
-			data->keypress = keyDown == event->what && !handled;
+			data->keypress = nullEvent != event->what && !handled;
 			break;
 	}
 	return handled;
